@@ -19,3 +19,31 @@ class FileClient:
         response.raise_for_status()
 
         return response.json()["file_names"]
+
+
+    def download_files(self, file_names: list[str]):
+        response = requests.post(
+            f"{self.base_url}/api/files/download",
+            headers=self.headers,
+            json={
+                "file_names": file_names
+            }
+        )
+
+        response.raise_for_status()
+
+        return response.content
+
+
+    def mark_downloaded(self, file_names: list[str]):
+        response = requests.post(
+            f"{self.base_url}/api/files/downloaded",
+            headers=self.headers,
+            json={
+                "file_names": file_names
+            }
+        )
+
+        response.raise_for_status()
+
+        return response.json()
