@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Скачанные файлы</title>
+
+    <style>
+
+        body{
+            font-family: Arial;
+            margin:40px;
+        }
+
+        table{
+            border-collapse: collapse;
+            width:100%;
+        }
+
+        th,td{
+            border:1px solid #ccc;
+            padding:10px;
+        }
+
+        th{
+            background:#f5f5f5;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<h1>Скачанные файлы</h1>
+
+<table>
+
+    <tr>
+        <th>Имя файла</th>
+        <th>Время скачивания</th>
+    </tr>
+
+    {% for file in files %}
+
+    <tr>
+
+        <td>{{ file.filename }}</td>
+
+        <td>{{ file.downloaded_at }}</td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+</body>
+</html>

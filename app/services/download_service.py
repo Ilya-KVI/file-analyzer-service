@@ -7,8 +7,15 @@ from datetime import datetime
 class DownloadService:
 
 
-    def __init__(self, client):
+    def __init__(
+            self,
+            client,
+            storage_service,
+            db
+    ):
         self.client = client
+        self.storage_service = storage_service
+        self.db = db
 
 
 
@@ -41,6 +48,12 @@ class DownloadService:
 
 
                 self.extract_zip(zip_data)
+
+
+                self.storage_service.save_files(
+                    self.db,
+                    batch
+                )
 
 
                 self.client.mark_downloaded(batch)
