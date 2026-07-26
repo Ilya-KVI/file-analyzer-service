@@ -1,4 +1,5 @@
 import requests
+import time
 
 
 class FileClient:
@@ -11,39 +12,99 @@ class FileClient:
 
 
     def get_file_names(self):
-        response = requests.get(
-            f"{self.base_url}/api/files/names",
-            headers=self.headers
-        )
 
-        response.raise_for_status()
+        while True:
+            response = requests.get(
+                f"{self.base_url}/api/files/names",
+                headers=self.headers
+            )
 
-        return response.json()["file_names"]
+            if response.status_code == 429:
+                wait = int(response.headers.get("Retry-After", 10))
+                print(f"429. Ждем {wait} секунд...")
+                time.sleep(wait)
+                continue
 
-
-    def download_files(self, file_names: list[str]):
-        response = requests.post(
-            f"{self.base_url}/api/files/download",
-            headers=self.headers,
-            json={
-                "file_names": file_names
-            }
-        )
-
-        response.raise_for_status()
-
-        return response.content
+            if response.status_code == 403:
+                wait = int(response.headers.get("Retry-After", 360))
+                print(f"403 BAN. Ждем {wait} секунд...")
+                time.sleep(wait)
+                continue
 
 
-    def mark_downloaded(self, file_names: list[str]):
-        response = requests.post(
-            f"{self.base_url}/api/files/downloaded",
-            headers=self.headers,
-            json={
-                "file_names": file_names
-            }
-        )
+            response.raise_for_status()
 
-        response.raise_for_status()
+            time.sleep(1)
 
-        return response.json()
+            return response.json()["file_names"]
+
+
+
+    def download_files(self, file_names):
+
+        while True:
+
+            response = requests.post(
+                f"{self.base_url}/api/files/download",
+                headers=self.headers,
+                json={
+                    "file_names": file_names[:3]
+                }
+            )
+
+
+            if response.status_code == 429:
+                wait = int(response.headers.get("Retry-After", 10))
+                print(f"429. Ждем {wait} секунд...")
+                time.sleep(wait)
+                continue
+
+
+            if response.status_code == 403:
+                wait = int(response.headers.get("Retry-After", 360))
+                print(f"403 download. Ждем {wait} секунд...")
+                time.sleep(wait)
+                continue
+
+
+            response.raise_for_status()
+
+            time.sleep(1)
+
+            return response.content
+
+
+
+    def mark_downloaded(self, file_names):
+
+        while True:
+
+            response = requests.post(
+                f"{self.base_url}/api/files/downloaded",
+                headers=self.headers,
+                json={
+                    "file_names": file_names
+                }
+            )
+
+
+            if response.status_code == 429:
+
+                wait = int(response.headers.get("Retry-After", 10))
+                print(f"429 mark. Ждем {wait} секунд...")
+                time.sleep(wait)
+                continue
+
+
+            if response.status_code == 403:
+                wait = int(response.headers.get("Retry-After", 360))
+                print(f"403 mark. Ждем {wait} секунд...")
+                time.sleep(wait)
+                continue
+
+
+            response.raise_for_status()
+
+            time.sleep(1)
+
+            return response.json()
