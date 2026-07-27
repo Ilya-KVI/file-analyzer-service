@@ -39,19 +39,41 @@
 
     async function downloadFiles(){
 
-        document.getElementById("result").innerHTML="Начинаю скачивание...";
+        document.getElementById("result").innerHTML =
+        "Начинаю скачивание...";
 
-        const response = await fetch("/download",{
+
+        fetch("/download", {
             method:"POST"
         });
 
-        const data = await response.json();
 
-        document.getElementById("result").innerHTML=
+        let interval = setInterval(async function(){
+
+
+            const response = await fetch("/progress");
+
+
+            const data = await response.json();
+
+
+            document.getElementById("result").innerHTML =
             `
-            <p>Скачано файлов: ${data.downloaded}</p>
-            <p>Время окончания: ${data.finished_at}</p>
+            <p>Статус: ${data.status}</p>
+            <p>${data.message}</p>
+            <p>Скачано: ${data.downloaded}</p>
             `;
+
+
+            if(data.status === "Завершено"){
+
+                clearInterval(interval);
+
+            }
+
+
+        },2000);
+
 
     }
 

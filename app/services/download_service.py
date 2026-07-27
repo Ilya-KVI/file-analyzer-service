@@ -3,6 +3,7 @@ import time
 import zipfile
 from datetime import datetime
 from pathlib import Path
+from app.services.progress_service import ProgressService
 
 MAX_FILES_PER_REQUEST = 3
 REQUEST_DELAY = 2
@@ -31,16 +32,38 @@ class DownloadService:
 
         while True:
 
+            ProgressService.update(
+                "Скачивание началось",
+                total_downloaded,
+                0,
+                "Получение списка файлов"
+            )
+
             file_names = self.client.get_file_names()
 
 
             if not file_names:
+
+                ProgressService.update(
+                    "Завершено",
+                    total_downloaded,
+                    0,
+                    "Все файлы скачаны!"
+                )
+
                 print("Все файлы скачаны!")
                 break
 
 
             print(
                 f"Получены файлы: {file_names}"
+            )
+
+            ProgressService.update(
+                "Скачивание",
+                total_downloaded,
+                len(file_names),
+                f"Получено {len(file_names)} названий файлов"
             )
 
 
@@ -75,6 +98,14 @@ class DownloadService:
 
 
                 total_downloaded += len(batch)
+
+
+                ProgressService.update(
+                    "Скачивание",
+                    total_downloaded,
+                    len(batch),
+                    f"Скачано {total_downloaded} файлов"
+                )
 
 
                 print(

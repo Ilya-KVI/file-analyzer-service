@@ -10,6 +10,8 @@ from app.routers.download_router import router as download_router
 
 from app.routers.files_router import router as files_router
 
+from app.routers.progress_router import router as progress_router
+
 app = FastAPI(
     title="File Analyzer Service"
 )
@@ -23,6 +25,8 @@ app.include_router(download_router)
 app.include_router(files_router)
 
 app.include_router(calculate_router)
+
+app.include_router(progress_router)
 
 
 @app.get("/")

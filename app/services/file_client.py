@@ -1,7 +1,9 @@
 import time
-
 import requests
 
+MAX_RETRIES_DELAY = 10
+BAN_DELAY = 360
+REQUEST_TIMEOUT = 30
 
 class FileClient:
 
@@ -11,113 +13,117 @@ class FileClient:
             "X-Candidate-Id": candidate_id
         }
 
+    def _request(
+                        self,
+                        method,
+                        url,
+                        **kwargs
+                ):
+
+                    while True:
+
+                        try:
+
+                            response = requests.request(
+                                method,
+                                url,
+                                headers=self.headers,
+                                timeout=REQUEST_TIMEOUT,
+                                **kwargs
+                            )
+
+                        except requests.exceptions.RequestException as e:
+
+                            print(
+                                f"Ошибка соединения: {e}"
+                            )
+
+                            print(
+                                f"Повтор через {MAX_RETRIES_DELAY} секунд..."
+                            )
+
+                            time.sleep(
+                                MAX_RETRIES_DELAY
+                            )
+
+                            continue
+
+
+                        if response.status_code == 429:
+
+                            wait = int(
+                                response.headers.get(
+                                    "Retry-After",
+                                    MAX_RETRIES_DELAY
+                                )
+                            )
+
+                            print(
+                                f"429. Ждем {wait} секунд..."
+                            )
+
+                            time.sleep(wait)
+
+                            continue
+
+
+                        if response.status_code == 403:
+
+                            wait = int(
+                                response.headers.get(
+                                    "Retry-After",
+                                    BAN_DELAY
+                                )
+                            )
+
+                            print(
+                                f"403 BAN. Ждем {wait} секунд..."
+                            )
+
+                            time.sleep(wait)
+
+                            continue
+
+
+                        response.raise_for_status()
+
+                        return response
+
     def get_file_names(self):
 
-        while True:
+        response = self._request(
+            "GET",
+            f"{self.base_url}/api/files/names"
+        )
 
-            try:
-                response = requests.get(
-                    f"{self.base_url}/api/files/names",
-                    headers=self.headers,
-                    timeout=30
-                )
+        time.sleep(1)
 
-            except requests.exceptions.RequestException as e:
-                print(f"Ошибка соединения: {e}")
-                print("Повтор через 10 секунд...")
-                time.sleep(10)
-                continue
-
-            if response.status_code == 429:
-                wait = int(response.headers.get("Retry-After", 10))
-                print(f"429. Ждем {wait} секунд...")
-                time.sleep(wait)
-                continue
-
-            if response.status_code == 403:
-                wait = int(response.headers.get("Retry-After", 360))
-                print(f"403 BAN. Ждем {wait} секунд...")
-                time.sleep(wait)
-                continue
-
-            response.raise_for_status()
-
-            time.sleep(1)
-
-            return response.json()["file_names"]
+        return response.json()["file_names"]
 
     def download_files(self, file_names):
 
-        while True:
+        response = self._request(
+            "POST",
+            f"{self.base_url}/api/files/download",
+            json={
+                "file_names": file_names[:3]
+            }
+        )
 
-            try:
-                response = requests.post(
-                    f"{self.base_url}/api/files/download",
-                    headers=self.headers,
-                    json={
-                        "file_names": file_names[:3]
-                    },
-                    timeout=30
-                )
+        time.sleep(1)
 
-            except requests.exceptions.RequestException as e:
-                print(f"Ошибка соединения: {e}")
-                print("Повтор через 10 секунд...")
-                time.sleep(10)
-                continue
-
-            if response.status_code == 429:
-                wait = int(response.headers.get("Retry-After", 10))
-                print(f"429. Ждем {wait} секунд...")
-                time.sleep(wait)
-                continue
-
-            if response.status_code == 403:
-                wait = int(response.headers.get("Retry-After", 360))
-                print(f"403 download. Ждем {wait} секунд...")
-                time.sleep(wait)
-                continue
-
-            response.raise_for_status()
-
-            time.sleep(1)
-
-            return response.content
+        return response.content
 
     def mark_downloaded(self, file_names):
 
-        while True:
+        response = self._request(
+            "POST",
+            f"{self.base_url}/api/files/downloaded",
+            json={
+                "file_names": file_names
+            }
+        )
 
-            try:
-                response = requests.post(
-                    f"{self.base_url}/api/files/downloaded",
-                    headers=self.headers,
-                    json={
-                        "file_names": file_names
-                    },
-                    timeout=30
-                )
+        time.sleep(1)
 
-            except requests.exceptions.RequestException as e:
-                print(f"Ошибка соединения: {e}")
-                print("Повтор через 10 секунд...")
-                time.sleep(10)
-                continue
-
-            if response.status_code == 429:
-                wait = int(response.headers.get("Retry-After", 10))
-                print(f"429 mark. Ждем {wait} секунд...")
-                time.sleep(wait)
-                continue
-
-            if response.status_code == 403:
-                wait = int(response.headers.get("Retry-After", 360))
-                print(f"403 mark. Ждем {wait} секунд...")
-                time.sleep(wait)
-                continue
-
-            response.raise_for_status()
-
-            time.sleep(1)
-
-            return response.json()
+        return response.json()

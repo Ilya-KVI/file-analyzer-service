@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, UTC
 
 from sqlalchemy.orm import Session
 
@@ -27,7 +27,7 @@ class FileStorageService:
 
                 file = DownloadedFile(
                     filename=file_name,
-                    downloaded_at=datetime.utcnow()
+                    downloaded_at=datetime.now(UTC)
                 )
 
                 db.add(file)

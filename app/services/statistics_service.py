@@ -4,24 +4,51 @@ from pathlib import Path
 
 class StatisticsService:
 
-    def calculate(self, file_names: list[str]):
+
+    def __init__(
+            self,
+            download_dir="app/downloads"
+    ):
+
+        self.download_dir = Path(download_dir)
+
+
+
+    def calculate(
+            self,
+            file_names: list[str]
+    ):
 
         total_counter = Counter()
 
         files_statistics = {}
 
+
         for file_name in file_names:
 
-            path = Path("app/downloads") / file_name
 
-            with open(path, "r", encoding="utf-8") as file:
+            path = self.download_dir / file_name
+
+
+            with open(
+                    path,
+                    "r",
+                    encoding="utf-8"
+            ) as file:
+
                 content = file.read().strip()
+
+
 
             counter = Counter(content)
 
+
             files_statistics[file_name] = dict(counter)
 
+
             total_counter.update(counter)
+
+
 
         return {
             "total": dict(total_counter),
