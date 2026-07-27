@@ -151,6 +151,16 @@
             "allFiles"
         ).value = "true";
 
+        let checkboxes = document.querySelectorAll(
+            'input[name="files"]'
+        );
+
+        checkboxes.forEach(
+            checkbox => {
+                checkbox.checked = true;
+            }
+        );
+
 
         alert(
             "Будут выбраны все файлы из базы"

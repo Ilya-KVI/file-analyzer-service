@@ -56,24 +56,3 @@ page: int = 1):
 
     finally:
         db.close()
-
-
-
-@router.post("/calculate")
-def calculate(
-        request: Request,
-        files: list[str] = Form(...)
-):
-
-    service = StatisticsService()
-
-    result = service.calculate(files)
-
-    return templates.TemplateResponse(
-        request=request,
-        name="statistics.html",
-        context={
-            "request": request,
-            "statistics": result
-        }
-    )

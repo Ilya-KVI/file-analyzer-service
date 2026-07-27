@@ -11,3 +11,5 @@ app/downloads/
 files.db
 downloaded_files/
 .vscode/
+.pytest_cache/
+.coverage

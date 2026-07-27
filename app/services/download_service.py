@@ -2,6 +2,11 @@ import io
 import time
 import zipfile
 from datetime import datetime
+from pathlib import Path
+
+MAX_FILES_PER_REQUEST = 3
+REQUEST_DELAY = 2
+DOWNLOAD_DIR = Path("app/downloads")
 
 
 class DownloadService:
@@ -39,9 +44,16 @@ class DownloadService:
             )
 
 
-            for i in range(0, len(file_names), 3):
+            for i in range(
+                   0,
+                   len(file_names),
+                   MAX_FILES_PER_REQUEST
+            ):
 
-                batch = file_names[i:i+3]
+
+                batch = file_names[
+                   i:i + MAX_FILES_PER_REQUEST
+               ]
 
 
                 zip_data = self.client.download_files(batch)
@@ -59,7 +71,7 @@ class DownloadService:
                 self.client.mark_downloaded(batch)
 
 
-                time.sleep(2)
+                time.sleep(REQUEST_DELAY)
 
 
                 total_downloaded += len(batch)
@@ -80,13 +92,29 @@ class DownloadService:
 
     def extract_zip(self, data):
 
-        with zipfile.ZipFile(io.BytesIO(data)) as archive:
+        DOWNLOAD_DIR.mkdir(
+            exist_ok=True
+        )
 
-            for filename in archive.namelist():
+        try:
 
-                archive.extract(
-                    filename,
-                    "app/downloads"
-                )
+            with zipfile.ZipFile(io.BytesIO(data)) as archive:
 
-                print(f"Файл распакован: {filename}")
+                for filename in archive.namelist():
+
+                    archive.extract(
+                        filename,
+                        DOWNLOAD_DIR
+                    )
+
+                    print(
+                        f"Файл распакован: {filename}"
+                    )
+
+        except zipfile.BadZipFile:
+
+            print(
+                "Ошибка: получен некорректный ZIP архив"
+            )
+
+            raise

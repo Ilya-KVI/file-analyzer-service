@@ -19,6 +19,8 @@ def calculate(
         all_files: str = Form("false")
 ):
 
+    print("РОУТ CALCULATE ВЫЗВАН")
+
     db = SessionLocal()
 
     try:
@@ -29,14 +31,16 @@ def calculate(
                 file.filename
                 for file in db.query(
                     DownloadedFile
+                ).order_by(
+                    DownloadedFile.downloaded_at.desc()
                 ).all()
             ]
-
 
         service = StatisticsService()
 
         result = service.calculate(files)
 
+        print(result)
 
         return templates.TemplateResponse(
             request=request,
@@ -47,7 +51,5 @@ def calculate(
             }
         )
 
-
     finally:
-
         db.close()
