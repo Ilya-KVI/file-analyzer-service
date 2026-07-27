@@ -37,7 +37,14 @@
 <table>
 
     <tr>
-        <th>Выбрать</th>
+        <th>
+            <input
+                type="checkbox"
+                id="selectAll"
+                onclick="selectAllFiles()"
+            >
+        </th>
+
         <th>Имя файла</th>
         <th>Время скачивания</th>
     </tr>
@@ -102,6 +109,28 @@
     {% endif %}
 
 </div>
+
+<script>
+
+    function selectAllFiles(){
+
+        let checkboxes = document.querySelectorAll(
+            'input[name="files"]'
+        );
+
+        let selectAll = document.getElementById(
+            "selectAll"
+        ).checked;
+
+
+        checkboxes.forEach(
+            checkbox => {
+                checkbox.checked = selectAll;
+            }
+        );
+    }
+
+</script>
 
 </body>
 </html>
