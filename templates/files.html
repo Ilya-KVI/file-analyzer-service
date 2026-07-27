@@ -32,9 +32,12 @@
 
 <h1>Скачанные файлы</h1>
 
+<form action="/calculate" method="post">
+
 <table>
 
     <tr>
+        <th>Выбрать</th>
         <th>Имя файла</th>
         <th>Время скачивания</th>
     </tr>
@@ -42,6 +45,14 @@
     {% for file in files %}
 
     <tr>
+
+        <td>
+            <input
+                    type="checkbox"
+                    name="files"
+                    value="{{ file.filename }}"
+            >
+        </td>
 
         <td>{{ file.filename }}</td>
 
@@ -52,6 +63,14 @@
     {% endfor %}
 
 </table>
+
+<br><br>
+
+<button type="submit">
+    Произвести расчёты
+</button>
+
+</form>
 
 </body>
 </html>

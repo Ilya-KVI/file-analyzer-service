@@ -1,8 +1,10 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Form
 from fastapi.templating import Jinja2Templates
 
 from app.database import SessionLocal
 from app.models.file import DownloadedFile
+from app.services.statistics_service import StatisticsService
+
 
 router = APIRouter()
 
@@ -18,7 +20,9 @@ def files(request: Request):
 
         files = (
             db.query(DownloadedFile)
-            .order_by(DownloadedFile.downloaded_at.desc())
+            .order_by(
+                DownloadedFile.downloaded_at.desc()
+            )
             .all()
         )
 
@@ -33,3 +37,24 @@ def files(request: Request):
 
     finally:
         db.close()
+
+
+
+@router.post("/calculate")
+def calculate(
+        request: Request,
+        files: list[str] = Form(...)
+):
+
+    service = StatisticsService()
+
+    result = service.calculate(files)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="statistics.html",
+        context={
+            "request": request,
+            "statistics": result
+        }
+    )

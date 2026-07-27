@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Статистика</title>
+</head>
+
+
+<body>
+
+<h1>Общая статистика</h1>
+
+
+<table border="1">
+
+    <tr>
+        <th>Цифра</th>
+        <th>Количество</th>
+    </tr>
+
+
+    {% for digit, count in statistics.total.items() %}
+
+    <tr>
+
+        <td>
+            {{ digit }}
+        </td>
+
+        <td>
+            {{ count }}
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+
+</table>
+
+
+
+<h1>Статистика по файлам</h1>
+
+
+{% for filename, data in statistics.files.items() %}
+
+<h3>
+    {{ filename }}
+</h3>
+
+
+<table border="1">
+
+    <tr>
+        <th>Цифра</th>
+        <th>Количество</th>
+    </tr>
+
+
+    {% for digit, count in data.items() %}
+
+    <tr>
+
+        <td>
+            {{ digit }}
+        </td>
+
+        <td>
+            {{ count }}
+        </td>
+
+    </tr>
+
+
+    {% endfor %}
+
+
+</table>
+
+
+<br>
+
+
+{% endfor %}
+
+
+</body>
+
+</html>

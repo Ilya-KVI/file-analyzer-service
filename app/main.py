@@ -1,6 +1,8 @@
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 
+from app.routers.calculate_router import router as calculate_router
+
 from app.database import engine
 from app.database import Base
 
@@ -26,6 +28,8 @@ templates = Jinja2Templates(directory="templates")
 app.include_router(download_router)
 
 app.include_router(files_router)
+
+app.include_router(calculate_router)
 
 client = FileClient(
     base_url="http://91.199.149.128:18001",
