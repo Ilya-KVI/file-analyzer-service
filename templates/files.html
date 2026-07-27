@@ -34,6 +34,12 @@
 
 <form action="/calculate" method="post">
 
+    <input
+        type="hidden"
+        id="allFiles"
+        name="all_files"
+        value="false">
+
 <table>
 
     <tr>
@@ -72,6 +78,12 @@
 </table>
 
 <br><br>
+
+    <button
+            type="button"
+            onclick="selectAllDatabaseFiles()">
+        Выбрать все файлы из базы
+    </button>
 
 <button type="submit">
     Произвести расчёты
@@ -128,6 +140,22 @@
                 checkbox.checked = selectAll;
             }
         );
+
+    }
+
+
+
+    function selectAllDatabaseFiles(){
+
+        document.getElementById(
+            "allFiles"
+        ).value = "true";
+
+
+        alert(
+            "Будут выбраны все файлы из базы"
+        );
+
     }
 
 </script>

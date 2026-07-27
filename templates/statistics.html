@@ -2,37 +2,102 @@
 <html lang="ru">
 
 <head>
+
     <meta charset="UTF-8">
-    <title>Статистика</title>
+
+    <title>
+        Статистика файлов
+    </title>
+
+
+    <style>
+
+        body{
+            font-family: Arial;
+            margin:40px;
+        }
+
+
+        table{
+
+            border-collapse: collapse;
+            width:400px;
+            margin-bottom:30px;
+
+        }
+
+
+        th,td{
+
+            border:1px solid #ccc;
+            padding:10px;
+            text-align:center;
+
+        }
+
+
+        th{
+
+            background:#f5f5f5;
+
+        }
+
+
+        .file{
+
+            margin-top:40px;
+
+        }
+
+
+    </style>
+
+
 </head>
 
 
 <body>
 
-<h1>Общая статистика</h1>
+
+<h1>
+    Общая статистика цифр
+</h1>
 
 
-<table border="1">
+<table>
+
 
     <tr>
-        <th>Цифра</th>
-        <th>Количество</th>
+
+        <th>
+            Цифра
+        </th>
+
+
+        <th>
+            Количество
+        </th>
+
     </tr>
 
 
     {% for digit, count in statistics.total.items() %}
 
+
     <tr>
 
         <td>
             {{ digit }}
         </td>
 
+
         <td>
             {{ count }}
         </td>
 
+
     </tr>
+
 
     {% endfor %}
 
@@ -41,49 +106,83 @@
 
 
 
-<h1>Статистика по файлам</h1>
+
+<h1>
+    Статистика по файлам
+</h1>
+
 
 
 {% for filename, data in statistics.files.items() %}
 
-<h3>
-    {{ filename }}
-</h3>
+
+<div class="file">
 
 
-<table border="1">
-
-    <tr>
-        <th>Цифра</th>
-        <th>Количество</th>
-    </tr>
+    <h3>
+        {{ filename }}
+    </h3>
 
 
-    {% for digit, count in data.items() %}
-
-    <tr>
-
-        <td>
-            {{ digit }}
-        </td>
-
-        <td>
-            {{ count }}
-        </td>
-
-    </tr>
+    <table>
 
 
-    {% endfor %}
+        <tr>
+
+            <th>
+                Цифра
+            </th>
 
 
-</table>
+            <th>
+                Количество
+            </th>
+
+
+        </tr>
+
+
+
+        {% for digit, count in data.items() %}
+
+
+        <tr>
+
+
+            <td>
+                {{ digit }}
+            </td>
+
+
+            <td>
+                {{ count }}
+            </td>
+
+
+        </tr>
+
+
+        {% endfor %}
+
+
+
+    </table>
+
+
+</div>
+
+
+{% endfor %}
+
 
 
 <br>
 
 
-{% endfor %}
+<a href="/files">
+    ← Вернуться к файлам
+</a>
+
 
 
 </body>
