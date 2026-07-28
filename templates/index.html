@@ -33,6 +33,82 @@
     Скачать данные
 </button>
 
+<h3>Прогресс скачивания</h3>
+
+<div style="
+    width: 100%;
+    background: #ddd;
+    height: 30px;
+    border-radius: 5px;
+">
+
+    <div id="progress"
+         style="
+         width:0%;
+         height:30px;
+         background:green;
+         color:white;
+         text-align:center;
+         line-height:30px;
+         border-radius:5px;
+         ">
+        0%
+    </div>
+
+</div>
+
+
+<p id="status">
+    Ожидание...
+</p>
+
+<p>
+    Скачано файлов:
+    <span id="downloaded">0</span>
+</p>
+
+<p>
+    Размер партии:
+    <span id="batch">0</span>
+</p>
+
+
+<script>
+
+    setInterval(async () => {
+
+        const response = await fetch("/progress");
+
+        const data = await response.json();
+
+
+        const bar =
+            document.getElementById("progress");
+
+
+        bar.style.width =
+            data.percent + "%";
+
+
+        bar.innerHTML =
+            data.percent + "%";
+
+
+        document.getElementById("status").innerHTML =
+    data.status + "<br>" + data.message;
+
+document.getElementById("downloaded").innerText =
+    data.downloaded;
+
+document.getElementById("batch").innerText =
+    data.current_batch;
+
+
+    }, 2000);
+
+
+</script>
+
 <div id="result"></div>
 
 <script>
@@ -46,35 +122,6 @@
         fetch("/download", {
             method:"POST"
         });
-
-
-        let interval = setInterval(async function(){
-
-
-            const response = await fetch("/progress");
-
-
-            const data = await response.json();
-
-
-            document.getElementById("result").innerHTML =
-            `
-            <p>Статус: ${data.status}</p>
-            <p>${data.message}</p>
-            <p>Скачано: ${data.downloaded}</p>
-            `;
-
-
-            if(data.status === "Завершено"){
-
-                clearInterval(interval);
-
-            }
-
-
-        },2000);
-
-
     }
 
 </script>

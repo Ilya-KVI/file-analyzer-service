@@ -1,3 +1,5 @@
+import os
+
 from fastapi import APIRouter
 
 from app.database import SessionLocal
@@ -12,8 +14,8 @@ router = APIRouter()
 def download():
 
     client = FileClient(
-        "http://91.199.149.128:18001",
-        "Ilya_kvi"
+        base_url=os.getenv("API_BASE_URL"),
+        candidate_id=os.getenv("CANDIDATE_ID")
     )
 
     storage_service = FileStorageService()

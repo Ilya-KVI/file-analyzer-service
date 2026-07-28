@@ -36,7 +36,8 @@ class DownloadService:
                 "Скачивание началось",
                 total_downloaded,
                 0,
-                "Получение списка файлов"
+                "Получение списка файлов",
+                0
             )
 
             file_names = self.client.get_file_names()
@@ -48,7 +49,8 @@ class DownloadService:
                     "Завершено",
                     total_downloaded,
                     0,
-                    "Все файлы скачаны!"
+                    "Все файлы скачаны!",
+                    100
                 )
 
                 print("Все файлы скачаны!")
@@ -104,7 +106,8 @@ class DownloadService:
                     "Скачивание",
                     total_downloaded,
                     len(batch),
-                    f"Скачано {total_downloaded} файлов"
+                    f"Скачано {total_downloaded} файлов",
+                    min(total_downloaded, 99)
                 )
 
 
